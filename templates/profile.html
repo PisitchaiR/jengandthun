@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App| Profile</title>
+    <link rel="stylesheet" href="/static/css/tailwind.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='/css/tailwind.css')}}">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+    <link rel="stylesheet" href="http://d2v52k3cl9vedd.cloudfront.net/vhs/0.1.0/vhs.min.css">
+</head>
+
+<body class="h-screen w-screen overflow-hidden vhs-fade vhs-duration-6" style="background-color: rgb(240, 240, 240);">
+    <nav class="w-screen shadow-md flex justify-between px-5 md:px-10 py-2 h-3/12 items-center">
+        <p class="p-2 rounded text-2xl shadow px-4 md:px-10">
+            Chat App
+        </p>
+        <div x-data="{dropdownMenu: false}" class="relative">
+            <!-- Dropdown toggle button -->
+            <button @click="dropdownMenu = ! dropdownMenu">
+                <img src="/static/img/profile.jpg" @keydown.escape="isOpen = false"
+                    class="w-10 h-10 rounded-full" alt="">
+            </button>
+            <!-- Dropdown list -->
+            <div x-show="dropdownMenu"
+                class="absolute right-0 py-2 mt-2 bg-white bg-gray-100 rounded-md shadow-xl w-44">
+                <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:text-gray-300">
+                    profile
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:text-gray-300" onclick="myID()">
+                    my ID
+                </a>
+                <hr>
+                <a href="/logout" class="block px-4 py-2 text-sm text-red text-red-400 hover:text-red-200">
+                    logout
+                </a>
+            </div>
+        </div>
+    </nav>
+    <section class="h-full flex">
+        <aside class="w-3/12 h-full shadow-md justify-center items-center overflow-y-auto">
+            <div class="add w-full flex justify-center flex flex-col">
+                {% for i in num_people %}
+                <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200">
+                    <img src="/static/img/profile.jpg" class="w-10 h-10 rounded-full" alt="">
+                    <p class="overflow-ellipsis">{{ name_passenger }}</p>
+                </button>
+                {% endfor %}
+            </div>
+        </aside>
+        <section class="pl-10 w-2/3">
+            <div class="text-3xl mt-6 border-b border-gray-300 pb-5 w-full">
+                MY PROFILE
+            </div>
+            <div class="flex items-center w-full">
+                <img src="/static/img/profile.jpg" alt="" class="w-1/4 rounded-full mt-10">
+                <div class="btn-container w-2/3 flex justify-center">
+                    <button class="rounded-lg shadow-md p-2 px-6 ml-40 hover:bg-red-400 hover:text-white transition duration-500" onclick="edit()">edit</button>
+                </div>
+            </div>
+            <div class="rounded-lg shadow-md p-4 mt-5 w-full">
+                <div class="flex justify-between w-full mt-4 items-center">
+                    <p class="text-xl">firstname:</p>
+                    <input type="text" class="rounded-lg px-4 w-2/3 py-2 focus:outline-none shadow-md text-gray-400"
+                        style="background-color: rgb(240, 240, 240);" value="{{ firstname }}" readonly>
+                </div>
+                <div class="flex justify-between w-full mt-4 items-center">
+                    <p class="text-xl">lastname:</p>
+                    <input type="text" class="rounded-lg px-4 w-2/3 py-2 focus:outline-none shadow-md text-gray-400"
+                        style="background-color: rgb(240, 240, 240);" value="{{ lastname }}" readonly>
+                </div>
+                <div class="flex justify-between w-full mt-4 items-center">
+                    <p class="text-xl">email:</p>
+                    <input type="text" class="rounded-lg px-4 w-2/3 py-2 focus:outline-none shadow-md text-gray-400"
+                        style="background-color: rgb(240, 240, 240);" value="{{ email }}" readonly>
+                </div>
+                <div class="flex justify-between w-full mt-4 items-center">
+                    <p class="text-xl">password:</p>
+                    <button class="rounded-lg shadow-md p-2 px-6 w-2/3 justify-center hover:bg-red-400 hover:text-white transition duration-500"
+                        onclick="edit_password()">edit</button>
+                </div>
+            </div>
+        </section>
+    </section>
+    <script>
+        let edit = () => {
+            swal.fire({
+                icon: 'warning',
+                title: 'edit your data',
+                html: `<input type="text" id="firstname" class="rounded-lg p-2 px-4 border border-gray-300 mt-2 w-full focus:outline-none" value="{{ firstname }}">
+                        <input type="text" id="lastname" class="rounded-lg p-2 px-4 border border-gray-300 mt-2 w-full focus:outline-none" value="{{ lastname }}">
+                        <input type="text" id="email" class="rounded-lg p-2 px-4 border border-gray-300 mt-2 w-full focus:outline-none" value="{{ email }}">`,
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                confirmButtonColor: '#52BE80',
+                cancelButtonColor: '#d33',
+                showCancelButton: true,
+                confirmButtonText: 'yes',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/addFriend',
+                        type: 'POST',
+                        data: { data: result.value },
+                        success: function (data) {
+                            Swal.fire(
+                                `${result.value}`,
+                                'added',
+                                'success'
+                            )
+                        }
+                    });
+                }
+            })
+        }
+
+        let edit_password = () => {
+            swal.fire({
+                icon: 'warning',
+                title: 'edit your password',
+                html: `<input type="password" id="password1" class="rounded-lg p-2 px-4 border border-gray-300 mt-2 w-full focus:outline-none" placeholder="Old Password">
+                        <input type="password" id="password2" class="rounded-lg p-2 px-4 border border-gray-300 mt-2 w-full focus:outline-none" placeholder="New Password">`,
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                focusConfirm: false,
+                preConfirm: () => {
+                    const password1 = Swal.getPopup().querySelector('#password1').value
+                    const password2 = Swal.getPopup().querySelector('#password2').value
+                    if (!password1 || !password2) {
+                        Swal.showValidationMessage(`Please enter login and password`)
+                    }
+                    return { login: login, password: password }
+                },
+                confirmButtonColor: '#52BE80',
+                cancelButtonColor: '#d33',
+                showCancelButton: true,
+                confirmButtonText: 'yes',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Your Sure',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '/addFriend',
+                                type: 'POST',
+                                data: { data: result.value },
+                                success: function (data) {
+                                    Swal.fire(
+                                        `${result.value}`,
+                                        'added',
+                                        'success'
+                                    )
+                                }
+                            });
+                        }
+                    })
+                }
+            })
+        }
+        let myID = () => {
+            my_id = "63070121"
+            Swal.fire({
+                icon: 'success',
+                title: "your id",
+                text: my_id,
+                confirmButtonColor: '#52BE80',
+            })
+        }
+    </script>
+</body>
+
+</html>

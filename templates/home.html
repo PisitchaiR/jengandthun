@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App| Home Page</title>
+    <link rel="stylesheet" href="/static/css/tailwind.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='/css/tailwind.css')}}">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+    <link rel="stylesheet" href="http://d2v52k3cl9vedd.cloudfront.net/vhs/0.1.0/vhs.min.css">
+
+</head>
+
+<body class="h-screen w-screen vhs-fade vhs-duration-6" style="background-color: rgb(240, 240, 240);">
+    <nav class="w-screen shadow-md flex justify-between px-5 md:px-10 py-2 h-3/12 items-center">
+        <p class="p-2 rounded text-2xl shadow px-4 md:px-10">
+            Chat App
+        </p>
+        <div x-data="{dropdownMenu: false}" class="relative">
+            <!-- Dropdown toggle button -->
+            <button @click="dropdownMenu = ! dropdownMenu">
+                <img src="/static/img/profile.jpg" @keydown.escape="isOpen = false"
+                    class="w-10 h-10 rounded-full" alt="">
+            </button>
+            <!-- Dropdown list -->
+            <div x-show="dropdownMenu"
+                class="absolute right-0 py-2 mt-2 bg-white bg-gray-100 rounded-md shadow-xl w-44">
+                <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:text-gray-300">
+                    profile
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:text-gray-300" onclick="myID()">
+                    my ID
+                </a>
+                <hr>
+                <a href="/logout" class="block px-4 py-2 text-sm text-red text-red-400 hover:text-red-200">
+                    logout
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- center -->
+    {% if num_people != 0%}
+    <section class="flex" style="height: 88.5%;">
+        <aside class="w-3/12 h-full shadow-md justify-center items-center overflow-y-auto">
+            <div class="add w-full flex justify-center flex flex-col">
+                {% for i in num_people %}
+                <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200" >
+                    <img src="/static/img/profile.jpg" class="w-10 h-10 rounded-full" alt="">
+                    <p class="overflow-ellipsis">{{ name_passenger }}</p>
+                </button>
+                {% endfor %}
+            </div>
+        </aside>
+        <section class="pl-2 w-10/12 h-full">
+            <div class="h-full overflow-hidden flex items-center justify-center">
+                <div class="flex-1 justify-between flex flex-col h-full">
+                    <div class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
+                        <div class="flex items-center space-x-4 pl-4">
+                            <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
+                                alt="" class="w-10 h-10 rounded-full">
+                            <div class="flex flex-col leading-tight">
+                                <div class="text-xl mt-1 flex items-center">
+                                    <span class="text-gray-700 mr-3">{{ name_passenger }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="messages"
+                        class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+                        {% if type_message == "passenger" %}
+                        
+                        <div class="chat-message">
+                            <div class="flex items-end" id="passenger">
+                                <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                                    <div><span
+                                            class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">{{message}}</span></div>
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
+                                    alt="My profile" class="w-6 h-6 rounded-full order-1">
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="chat-message" id="reciver">
+                            <div class="flex items-end justify-end">
+                                <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+                                    <div><span
+                                            class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{{meassage}}</span>
+                                    </div>
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
+                                    alt="My profile" class="w-6 h-6 rounded-full order-2">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+                        <div class="relative flex">
+                            <input type="text" placeholder="Write Something"
+                                class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-full py-3">
+                                <button type="button" onclick="send_message()"
+                                    class="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        class="h-6 w-6 transform rotate-90">
+                                        <path
+                                            d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+    {% else %}
+    <section class="h-full flex">
+        <aside class="w-3/12 h-full shadow-md justify-center items-center">
+            <div class="add w-full flex justify-center mt-10">
+                <button class="rounded-md px-4 shadow px-10" onclick="addChat()">
+                    <i class="ri-add-circle-line text-3xl"></i>
+                </button>
+            </div>
+        </aside>
+        <section class="pl-10 w-10/12">
+            <div class="text-3xl mt-6 border-b border-gray-300 pb-5 w-full">
+                HOME PAGE
+            </div>
+            <button class="round-md shadow-md mt-10 p-10 flex items-center" onclick="addChat()">
+                if you not message yet <i class="ri-add-circle-line text-3xl ml-4"></i>
+            </button>
+        </section>
+    </section>
+    {% endif %}
+    <script>
+        let send_message = () => {
+
+        }
+
+        let myID = () => {
+            my_id = "63070121"
+            Swal.fire({
+                icon: 'success',
+                title: "your id",
+                text: my_id,
+                confirmButtonColor: '#52BE80',
+            })
+        }
+
+        const el = document.getElementById('messages')
+        el.scrollTop = el.scrollHeight
+    </script>
+</body>
+
+</html>
