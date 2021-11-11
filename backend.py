@@ -1,6 +1,8 @@
 # import pymysql
 from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO
 # , make_response
+
 
 app = Flask(__name__)
 
