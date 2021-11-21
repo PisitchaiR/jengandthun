@@ -12,19 +12,21 @@
 </head>
 <body>
     <div class="flex justify-center items-center w-screen h-screen vhs-fade vhs-duration-6" style="background-color: rgb(240, 240, 240);">
-        <form action="/login" method="post" class="rounded-lg shadow-lg flex flex-col items-center w-2/3 h-2/3 justify-center" style="background-color: rgba(255, 255, 255, 0.603);">
+        <form action="/register_data" method="post" class="rounded-lg shadow-lg flex flex-col items-center w-2/3 h-2/3 justify-center" style="background-color: rgba(255, 255, 255, 0.603);">
+            <div id="error" class="w-full text-red-400 mb-10 flex justify-center"></div>
+            <div class="msg text-red-400 w-full text-center mb-10">{{ msg }}</div>
             <div class="text-5xl">SIGN UP</div>
             <div class="input-group flex flex-col w-full items-center mt-5">
                 <div class="flex w-2/3 justify-between">
                     <input type="text" class="rounded-full shadow mt-10 w-5/12 p-2 px-4 focus:outline-none "
-                        placeholder="firstname">
+                        placeholder="firstname" name="firstname">
                     <input type="text" class="rounded-full shadow mt-10 w-7/12 p-2 px-4 focus:outline-none ml-2"
-                        placeholder="lastname">
+                        placeholder="lastname" name="lastname">
                 </div>
                 <input type="text" class="rounded-full shadow mt-5 w-2/3 p-2 px-4 focus:outline-none "
-                        placeholder="email">
+                        placeholder="email" name="email">
                 <div class="relative w-2/3 flex items-center mt-5" x-data="{ show: true }">
-                    <input :type="show ? 'password' : 'text'" class="rounded-full shadow w-full p-2 px-4 focus:outline-none " placeholder="password">
+                    <input :type="show ? 'password' : 'text'" id="password1" name="password" class="rounded-full shadow w-full p-2 px-4 focus:outline-none " placeholder="password">
                     <div class="absolute top- right-0 pr-3 flex items-center text-sm leading-5">
                         <svg class="h-5 text-gray-700" fill="none" @click="show = !show"
                             :class="{'hidden': !show, 'block':show }" xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +45,7 @@
                     </div>
                 </div>
                 <div class="relative w-2/3 flex items-center mt-5" x-data="{ show: true }">
-                    <input :type="show ? 'password' : 'text'" class="rounded-full shadow w-full p-2 px-4 focus:outline-none " placeholder="confirm password">
+                    <input :type="show ? 'password' : 'text'" id="password2" onkeyup="checkPassword()" class="rounded-full shadow w-full p-2 px-4 focus:outline-none " placeholder="confirm password">
                     <div class="absolute top- right-0 pr-3 flex items-center text-sm leading-5">
                         <svg class="h-5 text-gray-700" fill="none" @click="show = !show"
                             :class="{'hidden': !show, 'block':show }" xmlns="http://www.w3.org/2000/svg"
@@ -61,10 +63,21 @@
                         </svg>
                     </div>
                 </div>
+                <script>
+                    let checkPassword = () => {
+                        let password1 = document.querySelector("#password1").value;
+                        let password2 = document.querySelector("#password2").value;
+                        if(password1 !== password2){
+                            let error = document.querySelector("#error").innerHTML = "* password is not match";
+                        }else{
+                            let error = document.querySelector("#error").innerHTML = "";
+                        }
+                    }
+                </script>
             </div>
-            <div class="button">
-                <button class="rounded-full mt-10 shadow px-8 py-1">sign up</button>
-                <a href="/to_login" class="ml-4 underline text-gray-500">have a account</a>
+            <div class="button mb-10">
+                <button class="rounded-full mt-10 shadow px-8 py-1" type="submit">sign up</button>
+                <a href="/login_page" class="ml-4 underline text-gray-500">have a account</a>
             </div>
         </form>
     </div>

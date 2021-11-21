@@ -18,14 +18,14 @@
 
 <body class="h-screen w-screen overflow-hidden vhs-fade vhs-duration-6" style="background-color: rgb(240, 240, 240);">
     <nav class="w-screen shadow-md flex justify-between px-5 md:px-10 py-2 h-3/12 items-center">
-        <p class="p-2 rounded text-2xl shadow px-4 md:px-10">
+        <a href="/home" class="p-2 rounded text-2xl shadow px-4 md:px-10">
             Chat App
-        </p>
+        </a>
         <div x-data="{dropdownMenu: false}" class="relative">
             <!-- Dropdown toggle button -->
             <button @click="dropdownMenu = ! dropdownMenu">
-                <img src="/static/img/profile.jpg" @keydown.escape="isOpen = false"
-                    class="w-10 h-10 rounded-full" alt="">
+                <img src="/static/img/profile.jpg" @keydown.escape="isOpen = false" class="w-10 h-10 rounded-full"
+                    alt="">
             </button>
             <!-- Dropdown list -->
             <div x-show="dropdownMenu"
@@ -46,7 +46,7 @@
     <section class="h-full flex">
         <aside class="w-3/12 h-full shadow-md justify-center items-center overflow-y-auto">
             <div class="add w-full flex justify-center flex flex-col">
-                {% for i in num_people %}
+                {% for i in num_friend %}
                 <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200">
                     <img src="/static/img/profile.jpg" class="w-10 h-10 rounded-full" alt="">
                     <p class="overflow-ellipsis">{{ name_passenger }}</p>
@@ -61,34 +61,38 @@
             <div class="flex items-center w-full">
                 <img src="/static/img/profile.jpg" alt="" class="w-1/4 rounded-full mt-10">
                 <div class="btn-container w-2/3 flex justify-center">
-                    <button class="rounded-lg shadow-md p-2 px-6 ml-40 hover:bg-red-400 hover:text-white transition duration-500" onclick="edit()">edit</button>
+                    <button
+                        class="rounded-lg shadow-md p-2 px-6 ml-40 hover:bg-red-400 hover:text-white transition duration-500"
+                        onclick="edit()">edit</button>
                 </div>
             </div>
             <div class="rounded-lg shadow-md p-4 mt-5 w-full">
                 <div class="flex justify-between w-full mt-4 items-center">
                     <p class="text-xl">firstname:</p>
                     <input type="text" class="rounded-lg px-4 w-2/3 py-2 focus:outline-none shadow-md text-gray-400"
-                        style="background-color: rgb(240, 240, 240);" value="{{ firstname }}" readonly>
+                        style="background-color: rgb(240, 240, 240);" value={{ firstname }} readonly>
                 </div>
                 <div class="flex justify-between w-full mt-4 items-center">
                     <p class="text-xl">lastname:</p>
                     <input type="text" class="rounded-lg px-4 w-2/3 py-2 focus:outline-none shadow-md text-gray-400"
-                        style="background-color: rgb(240, 240, 240);" value="{{ lastname }}" readonly>
+                        style="background-color: rgb(240, 240, 240);" value={{ lastname }} readonly>
                 </div>
                 <div class="flex justify-between w-full mt-4 items-center">
                     <p class="text-xl">email:</p>
                     <input type="text" class="rounded-lg px-4 w-2/3 py-2 focus:outline-none shadow-md text-gray-400"
-                        style="background-color: rgb(240, 240, 240);" value="{{ email }}" readonly>
+                        style="background-color: rgb(240, 240, 240);" value={{ email }} readonly>
                 </div>
                 <div class="flex justify-between w-full mt-4 items-center">
                     <p class="text-xl">password:</p>
-                    <button class="rounded-lg shadow-md p-2 px-6 w-2/3 justify-center hover:bg-red-400 hover:text-white transition duration-500"
-                        onclick="edit_password()">edit</button>
+                    <button
+                        class="rounded-lg shadow-md p-2 px-6 w-2/3 justify-center hover:bg-red-400 hover:text-white transition duration-500"
+                        onclick="edit_password('{{ password }}')">edit</button>
                 </div>
             </div>
         </section>
     </section>
     <script>
+        // edit bio
         let edit = () => {
             swal.fire({
                 icon: 'warning',
@@ -99,6 +103,15 @@
                 inputAttributes: {
                     autocapitalize: 'off'
                 },
+                preConfirm: () => {
+                    const firstname = Swal.getPopup().querySelector('#firstname').value
+                    const lastname = Swal.getPopup().querySelector('#lastname').value
+                    const email = Swal.getPopup().querySelector('#email').value
+                    if (!lastname || !firstname || !email) {
+                        Swal.showValidationMessage(`Incomplete information`)
+                    }
+                    return { firstname : firstname, lastname : lastname, email:email}
+                },
                 confirmButtonColor: '#52BE80',
                 cancelButtonColor: '#d33',
                 showCancelButton: true,
@@ -106,7 +119,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/addFriend',
+                        url: '/edit_bio',
                         type: 'POST',
                         data: { data: result.value },
                         success: function (data) {
@@ -121,7 +134,8 @@
             })
         }
 
-        let edit_password = () => {
+        // edit password
+        let edit_password = (oldPassword) => {
             swal.fire({
                 icon: 'warning',
                 title: 'edit your password',
@@ -135,9 +149,9 @@
                     const password1 = Swal.getPopup().querySelector('#password1').value
                     const password2 = Swal.getPopup().querySelector('#password2').value
                     if (!password1 || !password2) {
-                        Swal.showValidationMessage(`Please enter login and password`)
+                        Swal.showValidationMessage(`Please enter password`)
                     }
-                    return { login: login, password: password }
+                    return { password1: password1, password2: password2 }
                 },
                 confirmButtonColor: '#52BE80',
                 cancelButtonColor: '#d33',
@@ -145,32 +159,45 @@
                 confirmButtonText: 'yes',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Your Sure',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: '/addFriend',
-                                type: 'POST',
-                                data: { data: result.value },
-                                success: function (data) {
-                                    Swal.fire(
-                                        `${result.value}`,
-                                        'added',
-                                        'success'
-                                    )
+                    password1 = result.value.password1
+                    password2 = result.value.password2
+                    if (result.isConfirmed) {
+                        if (password1 !== oldPassword) {
+                            Swal.fire(
+                                `${result.value}`,
+                                'old password is wrong',
+                                'error'
+                            )
+                        } else {
+                            Swal.fire({
+                                title: 'Your Sure',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, delete it!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.ajax({
+                                        url: '/edit_password',
+                                        type: 'POST',
+                                        data: { data: password2 },
+                                        success: function (data) {
+                                            Swal.fire(
+                                                'change password success',
+                                                'success'
+                                            )
+                                        }
+                                    });
                                 }
-                            });
+                            })
                         }
-                    })
+                    }
                 }
             })
         }
+
+        // show my id
         let myID = () => {
             my_id = "63070121"
             Swal.fire({

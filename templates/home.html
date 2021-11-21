@@ -19,14 +19,14 @@
 
 <body class="h-screen w-screen vhs-fade vhs-duration-6" style="background-color: rgb(240, 240, 240);">
     <nav class="w-screen shadow-md flex justify-between px-5 md:px-10 py-2 h-3/12 items-center">
-        <p class="p-2 rounded text-2xl shadow px-4 md:px-10">
+        <a href="/home" class="p-2 rounded text-2xl shadow px-4 md:px-10">
             Chat App
-        </p>
+        </a>
         <div x-data="{dropdownMenu: false}" class="relative">
             <!-- Dropdown toggle button -->
             <button @click="dropdownMenu = ! dropdownMenu">
-                <img src="/static/img/profile.jpg" @keydown.escape="isOpen = false"
-                    class="w-10 h-10 rounded-full" alt="">
+                <img src="/static/img/profile.jpg" @keydown.escape="isOpen = false" class="w-10 h-10 rounded-full"
+                    alt="">
             </button>
             <!-- Dropdown list -->
             <div x-show="dropdownMenu"
@@ -45,12 +45,12 @@
         </div>
     </nav>
     <!-- center -->
-    {% if num_people != 0%}
+    {% if num_people != 0 %}
     <section class="flex" style="height: 88.5%;">
         <aside class="w-3/12 h-full shadow-md justify-center items-center overflow-y-auto">
             <div class="add w-full flex justify-center flex flex-col">
                 {% for i in num_people %}
-                <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200" >
+                <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200">
                     <img src="/static/img/profile.jpg" class="w-10 h-10 rounded-full" alt="">
                     <p class="overflow-ellipsis">{{ name_passenger }}</p>
                 </button>
@@ -74,12 +74,13 @@
                     <div id="messages"
                         class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
                         {% if type_message == "passenger" %}
-                        
+
                         <div class="chat-message">
                             <div class="flex items-end" id="passenger">
                                 <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
                                     <div><span
-                                            class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">{{message}}</span></div>
+                                            class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">{{message}}</span>
+                                    </div>
                                 </div>
                                 <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
                                     alt="My profile" class="w-6 h-6 rounded-full order-1">
@@ -103,19 +104,19 @@
                         <div class="relative flex">
                             <input type="text" placeholder="Write Something"
                                 class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-full py-3">
-                                <button type="button" onclick="send_message()"
-                                    class="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none ml-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        class="h-6 w-6 transform rotate-90">
-                                        <path
-                                            d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
-                                        </path>
-                                    </svg>
-                                </button>
-                            </div>
+                            <button type="button" onclick="send_message()"
+                                class="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="h-6 w-6 transform rotate-90">
+                                    <path
+                                        d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
+                                    </path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
     </section>
@@ -150,6 +151,28 @@
                 title: "your id",
                 text: my_id,
                 confirmButtonColor: '#52BE80',
+            })
+        }
+
+        let addChat = () => {
+            Swal.fire({
+                title: 'input id your friend',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'add',
+                showLoaderOnConfirm: true,
+                confirmButtonColor: '#52BE80',
+                cancelButtonColor: '#d33',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: `${result.value.login}'s avatar`,
+                        imageUrl: result.value.avatar_url
+                    })
+                }
             })
         }
 
