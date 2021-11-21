@@ -16,7 +16,7 @@ def main():
 @app.route("/home")
 def home():
     """go to home"""
-    return render_template("home.html", num_friend = session['number_friend'])
+    return render_template("home.html", num_people = int(session['number_friend']), myId=session['my_id'])
 
 @app.route("/register_page")
 def register_page():
@@ -40,6 +40,7 @@ def register_data():
             firstname = request.form["firstname"]
             lastname = request.form["lastname"]
             password = request.form["password"]
+            card_id = request.form["card_id"]
             sql = "SELECT email FROM users WHERE email = %s"
             cursor.execute(sql, email)
             account = cursor.fetchone()
@@ -47,10 +48,10 @@ def register_data():
                 msg = '* this email is have in system'
                 return render_template("register.html", msg=msg)
             else :
-                sql = "Insert into `users` (`firstname`, `lastname`, `email`, `password`, `number_friend`) values(%s, %s, %s, %s, %d)"
-                cursor.execute(sql, (firstname, lastname, email, password, 0))
+                sql = "Insert into `users` (`firstname`, `lastname`, `email`, `password`, `number_friend`, `card_id`) values(%s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, (firstname, lastname, email, password, 0, card_id))
                 conn.commit()
-                return render_template("login.html")
+                return render_template("index.html")
     return render_template("register.html")
 
 
@@ -73,9 +74,12 @@ def login_data():
             if account:
                 session['loggedin'] = True
                 session['id'] = account[0]
-                session['number_friend'] = account[5]
+                session['number_friend']=account[6]
+                session['my_id'] = account[4]
+                print(session['number_friend'])
                 print("login success")
-                return render_template("home.html", num_friend = session['number_friend'])
+                print(session)
+                return render_template("home.html", num_people=int(session['number_friend']), myId=session['my_id'])
             else:
                 msg = "* not have a email in system"
                 return render_template("index.html", msg=msg)
@@ -84,9 +88,9 @@ def login_data():
 
 @app.route("/logout")
 def logout():
+    print(session)
     session.pop("loggedin", None)
     session.pop("id", None)
-    session.pop("username", None)
     return render_template("index.html")
 
 
@@ -100,9 +104,7 @@ def profile():
         print(id)
         print(account)
         if account:
-            for i in account:
-                print(i)
-            return render_template("profile.html", firstname=account[1], lastname=account[2], email=account[3], password=account[4])
+            return render_template("profile.html", firstname=account[1], lastname=account[2], email=account[3], password=account[5], myId=session["my_id"])
         else:
             return render_template("notfound")
 
@@ -113,6 +115,10 @@ def addfriend():
     id_friend = request.form["data"]
     if request.method == "POST":
         print(id_friend)
+        with conn.cursor() as cursor:
+            sql = "INSERT INTO users(weight, desiredWeight) SELECT weight, desiredWeight FROM AnotherTable WHERE id = %s"
+            cursor.execute(sql, (firstname, lastname, email, password, 0, card_id))
+            conn.commit()
     return render_template("home_onAddFriend.html")
 
 

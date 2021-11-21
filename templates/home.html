@@ -49,7 +49,7 @@
     <section class="flex" style="height: 88.5%;">
         <aside class="w-3/12 h-full shadow-md justify-center items-center overflow-y-auto">
             <div class="add w-full flex justify-center flex flex-col">
-                {% for i in num_people %}
+                {% for i in range(num_people) %}
                 <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200">
                     <img src="/static/img/profile.jpg" class="w-10 h-10 rounded-full" alt="">
                     <p class="overflow-ellipsis">{{ name_passenger }}</p>
@@ -74,7 +74,6 @@
                     <div id="messages"
                         class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
                         {% if type_message == "passenger" %}
-
                         <div class="chat-message">
                             <div class="flex items-end" id="passenger">
                                 <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
@@ -149,7 +148,7 @@
             Swal.fire({
                 icon: 'success',
                 title: "your id",
-                text: my_id,
+                text: "{{ myId }}",
                 confirmButtonColor: '#52BE80',
             })
         }

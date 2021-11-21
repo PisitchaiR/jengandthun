@@ -46,7 +46,7 @@
     <section class="h-full flex">
         <aside class="w-3/12 h-full shadow-md justify-center items-center overflow-y-auto">
             <div class="add w-full flex justify-center flex flex-col">
-                {% for i in num_friend %}
+                {% for i in num_people %}
                 <button class="rounded-md p-4 shadow mx-2 flex justify-between items-center mt-4 focus:bg-gray-200">
                     <img src="/static/img/profile.jpg" class="w-10 h-10 rounded-full" alt="">
                     <p class="overflow-ellipsis">{{ name_passenger }}</p>
@@ -203,7 +203,7 @@
             Swal.fire({
                 icon: 'success',
                 title: "your id",
-                text: my_id,
+                text: "{{ myId }}",
                 confirmButtonColor: '#52BE80',
             })
         }
